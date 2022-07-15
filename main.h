@@ -1,82 +1,89 @@
-#ifndef MAIN_H_
-#define MAIN_H_
-
+#ifndef MAIN_H
+#define MAIN_H
 #include <stdarg.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
 #include <unistd.h>
-#include <string.h>
-
-/* Flags struct */
-typedef struct flags
+/**
+ * struct buffer - buffer structure for our implimentation of printf
+ * @buf: buffer to write characters
+ * @tmpbuf: tmp buffer to write to before putting in buffer
+ * @format: the string passed to our printf
+ * @ap: the variadic address point
+ * @bp: the current point in the buffer
+ * @tp: the current point in the tmp buffer
+ * @fp: the current point in the format
+ * @printed: the number of chars printed from _write
+ */
+typedef struct buffer
 {
-	int plus;
-	int space;
-	int hash;
-} flag_t;
-
-/* Modifiers struct */
-typedef struct modifiers
+	char *buf;
+	char *tmpbuf;
+	const char *format;
+	va_list ap;
+	int bp;
+	int tp;
+	int fp;
+	unsigned int printed;
+} buffer;
+/**
+ *struct handlers - handlers struct
+ *@plus:'+' flag
+ *@space:' ' flag
+ *@hash:'#' flag
+ *@zero:'0' flag
+ *@minus:'-' handler
+ *@width:width handler
+ *@precision:precision handler
+ *@h_mod:h modifier handler
+ *@l_mod:l modifier handler
+ */
+typedef struct handlers
 {
-	int l;
-	int h;
-	int width;
-} mod_t;
-
-/* identifiers struct */
-typedef struct identifiers
+	unsigned int plus;
+	unsigned int space;
+	unsigned int hash;
+	unsigned int zero;
+	unsigned int minus;
+	unsigned int width;
+	unsigned int precision;
+	unsigned int h_mod;
+	unsigned int l_mod;
+} han_s;
+/**
+ * struct ops - a structure containing a char to compare with formatb modifiers
+ * and then choose the right function when it matches
+ * @operation: the char we want to compare to
+ * @func: the address of the function we want to return if a char matches
+ */
+typedef struct ops
 {
-	char symbol;
-	int (*func)(va_list, flag_t *, mod_t *);
-} id;
+	char operation;
+	int (*func)(va_list);
+} ops_f;
 
-
-/* Write functions*/
-int _putchar(char c);
-int _puts(char *str);
-
-
-/* _printf */
 int _printf(const char *format, ...);
+int _putchar(char c);
+int (*get_func(char ch))(va_list);
+int print_char(va_list list);
+int print_string(va_list list);
+int print_nan(char ch1, char ch2);
+int print_num(va_list list);
+unsigned int base_len(unsigned int num, int base);
+int print_binary(va_list list);
+int print_octal(va_list list);
+int print_hex(va_list list);
+int print_Hex(va_list list);
+int print_S(va_list list);
+int *rev_string(char *s);
+char *hex_conv(int num);
+int print_p(va_list list);
+int print_unsigned(va_list list);
+int print_rot13(va_list list);
+int print_r(va_list list);
+int get_flags(char c, han_s *f);
+int get_modifier(char *s, han_s *handler);
+char *get_width(char *s, han_s *handler, va_list list);
 
-/* Print character functions */
-int _print_char(va_list, flag_t *, mod_t *);
-int _print_str(va_list, flag_t *, mod_t *);
-int _print_specifier(va_list, flag_t *, mod_t *);
 
-/* Print numbers in decimal */
-int  _print_dec(va_list, flag_t *, mod_t *);
 
-/* Print numbers in other bases */
-int _print_binary(va_list, flag_t *, mod_t *);
-int _print_hexa_upper(va_list, flag_t *, mod_t *);
-int _print_hexa_lower(va_list, flag_t *, mod_t *);
-int _print_octal(va_list, flag_t *, mod_t *);
-int _print_unsigned(va_list, flag_t *, mod_t *);
-int _print_address(va_list, flag_t *, mod_t *);
-
-/* Print addresses in hexadecimal format */
-int _print_address(va_list, flag_t *, mod_t *);
-
-/* Print custom */
-int _print_percent(va_list, flag_t *, mod_t *);
-int _print_reverse(va_list, flag_t *, mod_t *);
-int _print_rot13(va_list, flag_t *, mod_t *);
-
-/* Helper functions */
-void print_number(long n);
-int count_digits(long n);
-char *convert(unsigned long num, int base, int lowercase);
-
-/* Function Pointer Generator */
-int (*get_func(char c))(va_list, flag_t *, mod_t *);
-
-/* Sets flags */
-int get_flags(char elem, flag_t *);
-
-/* Sets the modifiers */
-int get_modifier(char elem, mod_t *);
-void set_width(int width, mod_t *);
-
-#endif /* MAIN_H_ */
+#endif /*MAIN_H*/

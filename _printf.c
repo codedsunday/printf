@@ -1,50 +1,45 @@
+#include <unistd.h>
 #include "main.h"
-
 /**
-  *_printf - prints formatted output.
-  *@format: input.
-  *Return: number of chars printed or -1.
-  */
+ *_printf - takes in a string and prints different types of arguments for
+ * an unspecified amount of arguments
+ * @format: the initial string that tell us what is going to be printed
+ * Return: the amount of times we write to stdout
+ */
 int _printf(const char *format, ...)
 {
-	va_list args;
-	int i, len;
-	int (*get_ptr)(va_list, int);
+	int i, count;
 
-	va_start(args, format);
-	if (!(format))
+	int (*f)(va_list);
+
+	va_list list;
+
+	if (format == NULL)
 		return (-1);
-	i = 0;
-	len = 0;
-	while (format && format[i])
+
+	va_start(list, format);
+	i = count = 0;
+
+	while (format[i] != '\0')
 	{
 		if (format[i] == '%')
 		{
-			i++;
-			if (format[i] == '%')
-			{
-				len += _putchar(format[i]);
-				i++;
-				continue;
-			}
-			if (format[i] == '\0')
+			if (format[i + 1] == '\0')
 				return (-1);
-			get_ptr = get_print_func(format[i]);
-			if (get_ptr != NULL)
-				len = get_ptr(args, len);
+			f = get_func(format[i + 1]);
+			if (f == NULL)
+				count += print_nan(format[i], format[i + 1]);
 			else
-			{
-				len += _putchar(format[i - 1]);
-				len += _putchar(format[i]);
-			}
+				count += f(list);
 			i++;
 		}
 		else
 		{
-			len += _putchar(format[i]);
-			i++;
+			_putchar(format[i]);
+			count++;
 		}
+		i++;
 	}
-	va_end(args);
-	return (len);
+	va_end(list);
+	return (count);
 }

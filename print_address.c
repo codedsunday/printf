@@ -1,40 +1,59 @@
 #include "main.h"
-
 /**
- * _print_address - function to print address
- * @valist: variable arguments
- * @f: pointer to flag_t
- * @m: pointer to mod_t
- *
- * Return: count
+ *print_p - prints an address
+ *@list:list to increment
+ *Return:count of characters
  */
-int _print_address(va_list valist, flag_t *f, mod_t *m)
+int print_p(va_list list)
 {
-	char *str;
-	int count = 0;
-	unsigned long int addr = va_arg(valist, unsigned long int);
-	int spaces, i;
+	char *hex;
+	char *s = "(nil)";
+	unsigned long int add = (unsigned long int)va_arg(list, void *);
+	int c = 0, i, temp, len;
 
-	if (!addr)
+	if (add == 0)
 	{
-		return (_puts("(nil)"));
+		for (i = 0; s[i]; i++)
+		{
+			_putchar(s[i]);
+			c++;
+		}
+		return (c);
 	}
-
-	(void)f;
-
-	str = convert(addr, 16, 1);
-	while (str[count] != '\0')
-		count++;
-	if (m->width > count)
+	_putchar('0');
+	_putchar('x');
+	c = 2;
+	i = 0;
+	len = base_len(add, 16);
+	hex = malloc((sizeof(char) *len) + 1);
+	if (!hex)
 	{
-		spaces = m->width - count;
-		for (i = 0; i < spaces; i++)
-			_putchar(' ');
+		for (i = 0; s[i]; i++)
+		{
+			_putchar(s[i]);
+		}
+		return (5);
 	}
-	count += _putchar('0');
-	count += _putchar('x');
-
-	_puts(str);
-
-	return (count);
+	while (add > 0)
+	{
+		temp = add % 16;
+		if (temp > 9)
+		{
+			hex[i] = temp + 87;
+			i++;
+		}
+		else
+		{
+			hex[i] = temp + 48;
+			i++;
+		}
+		add /= 16;
+	}
+	rev_string(hex);
+	for (i = 0; hex[i]; i++)
+	{
+		_putchar(hex[i]);
+		c++;
+	}
+	return (c);
 }
