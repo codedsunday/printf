@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 #include <unistd.h>
 #include "main.h"
+=======
+#include "holberton.h"
+
+>>>>>>> 9da5a91374c987a93681b14c580ce5d83daf3a21
 /**
  *_printf - takes in a string and prints different types of arguments for
  * an unspecified amount of arguments
